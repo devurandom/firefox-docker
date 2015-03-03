@@ -6,6 +6,7 @@ ifeq ($(FLASH_VERSION),)
 $(error Specify FLASH_VERSION)
 endif
 
+.PHONY: all
 all:
 	# Adjust version numbers in Dockerfile
 	sed -r \
@@ -18,11 +19,20 @@ all:
 	docker build -t devurandom/firefox:v$(FIREFOX_VERSION)-flash-v$(FLASH_VERSION) .
 	# Tag newly created version as latest
 	docker tag -f devurandom/firefox:v$(FIREFOX_VERSION)-flash-v$(FLASH_VERSION) devurandom/firefox:latest
-	# Push images to Docker Registry
-	docker push devurandom/firefox
+	# Remove container if it is not currently running
+	( docker ps | awk '$$NF=="firefox"{found=1} END{if(!found){exit 1}}' && echo "Restart firefox" ) || ( docker ps -a | awk '$$NF=="firefox"{found=1} END{if(!found){exit 1}}' && docker rm firefox ) || true
+
+.PHONY: push
+push: push-git push-docker
+
+.PHONY: push-git
+push-git:
 	# Commit changes to Git
 	if ! git diff --quiet ; then git commit -a ; fi
 	# Push changes to GitHub
 	git push
-	# Remove container if it is not currently running
-	( docker ps | awk '$$NF=="firefox"{found=1} END{if(!found){exit 1}}' && echo "Restart firefox" ) || ( docker ps -a | awk '$$NF=="firefox"{found=1} END{if(!found){exit 1}}' && docker rm firefox ) || true
+
+.PHONY: push-docker
+push-docker:
+	# Push images to Docker Registry
+	docker push devurandom/firefox
