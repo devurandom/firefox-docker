@@ -21,7 +21,7 @@ all:
 	# Push images to Docker Registry
 	docker push devurandom/firefox
 	# Commit changes to Git
-	git commit
+	if ! git diff --quiet ; then git commit -a ; fi
 	# Push changes to GitHub
 	git push
 	# Remove container if it is not currently running
