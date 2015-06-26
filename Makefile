@@ -20,4 +20,4 @@ all:
 	# Tag newly created version as latest
 	docker tag -f devurandom/firefox:v$(FIREFOX_VERSION)-flash-v$(FLASH_VERSION) devurandom/firefox:latest
 	# Remove container if it is not currently running
-	( docker ps | awk '$$NF=="firefox"{found=1} END{if(!found){exit 1}}' && echo "Restart firefox" ) || ( docker ps -a | awk '$$NF=="firefox"{found=1} END{if(!found){exit 1}}' && docker rm firefox ) || true
+	( docker ps | awk '$$NF=="firefox"{found=1} END{if(!found){exit 1}}' && echo "Please restart firefox manually" ) || ( docker ps -a | awk '$$NF=="firefox"{found=1} END{if(!found){exit 1}}' && docker rm firefox ) || true
