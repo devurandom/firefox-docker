@@ -3,9 +3,6 @@ MAINTAINER Dennis Schridde <devurandom@gmx.net>
 
 VOLUME /home
 
-# Set timezone
-RUN echo Europe/Berlin > /etc/timezone && dpkg-reconfigure --frontend noninteractive tzdata
-
 # Add multiverse repository
 RUN apt-get -y install software-properties-common && apt-add-repository multiverse
 
