@@ -23,4 +23,4 @@ VOLUME /home
 ENV HOME /home
 
 ENTRYPOINT ["/usr/bin/firefox"]
-CMD ["-new-instance"]
+CMD ["--no-remote"]
