@@ -17,4 +17,7 @@ declare -a dri_devices
 for d in `find /dev/dri -type c` ; do
 	dri_devices+=(--device "${d}")
 done
-exec docker run --rm --volumes-from storage --env SOCKS_SERVER="socks://172.17.0.1:5080" --env SOCKS_VERSION=5 --env DISPLAY="${DISPLAY}" --volume /tmp/.X11-unix:/tmp/.X11-unix --env PULSE_SERVER="unix:/tmp/pulse-unix" --volume /run/user/"${UID}"/pulse/native:/tmp/pulse-unix "${dri_devices[@]}" --volume /etc/localtime:/etc/localtime:ro --volume /etc/timezone:/etc/timezone:ro devurandom/firefox "$@"
+
+docker_address="$(ip address show dev docker0 | egrep '\<inet\>' | awk '{print$2}' | cut -d/ -f1)"
+
+exec docker run --rm --user "$(id -u)" --volume "${HOME}"/firefox-storage:/home:rw --env HOME=/home --env CUPS_SERVER="${docker_address}" --env SOCKS_SERVER="${docker_address}:5080" --env SOCKS_VERSION=5 --env DISPLAY="${DISPLAY}" --volume /tmp/.X11-unix:/tmp/.X11-unix --env PULSE_SERVER="unix:/tmp/pulse-unix" --volume /run/user/"${UID}"/pulse/native:/tmp/pulse-unix "${dri_devices[@]}" --volume /etc/localtime:/etc/localtime:ro --volume /etc/timezone:/etc/timezone:ro devurandom/firefox "$@"
