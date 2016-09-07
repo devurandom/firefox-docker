@@ -9,9 +9,9 @@ set -e
 
 xhost +local:
 
-if ! container_exists storage ; then
-	docker run --name storage devurandom/storage
-fi
+#if ! container_exists storage ; then
+#	docker run --name storage devurandom/storage
+#fi
 
 declare -a dri_devices
 for d in `find /dev/dri -type c` ; do
