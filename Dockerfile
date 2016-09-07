@@ -6,7 +6,7 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula boolean true | debconf-set-selections
 
 # Add multiverse, webupd8 (for freshplayerplugin) and pipelight repositories
-RUN apt-get -y install software-properties-common && apt-add-repository multiverse && apt-add-repository ppa:nilarimogard/webupd8 && apt-add-repository ppa:pipelight/stable
+RUN apt-get -y update && apt-get -y install software-properties-common && apt-add-repository multiverse && apt-add-repository ppa:nilarimogard/webupd8 && apt-add-repository ppa:pipelight/stable
 
 # Install system packages and those for HTML5 audio/video, which change only seldomly
 RUN apt-get -y update && apt-get -y install --install-recommends dbus-x11 pulseaudio gstreamer1.0-pulseaudio gstreamer1.0-plugins-good ubuntu-restricted-extras libgl1-mesa-glx-lts-vivid libgl1-mesa-dri-lts-vivid libtxc-dxtn-s2tc0 mesa-vdpau-drivers-lts-vivid libvdpau-va-gl1 i965-va-driver vdpau-va-driver
