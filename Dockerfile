@@ -13,7 +13,7 @@ RUN apt-get -y update && apt-get -y install --install-recommends dbus-x11 pulsea
 
 # Install Firefox, Flash, Silverlight
 # Don't install Pipelight, as Apt refuses to do so...
-RUN apt-get -y update && apt-get -y install --install-recommends firefox=44.0* pepperflashplugin-nonfree freshplayerplugin
+RUN apt-get -y update && apt-get -y install --install-recommends firefox=48.0* pepperflashplugin-nonfree freshplayerplugin
 
 # Update Pipelight plugins
 #RUN pipelight-plugin --update
