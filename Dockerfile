@@ -2,8 +2,6 @@ FROM ubuntu:14.04
 MAINTAINER Dennis Schridde <devurandom@gmx.net>
 ENV DEBIAN_FRONTEND noninteractive
 
-VOLUME /home
-
 # Allow installation of corefonts
 RUN echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula boolean true | debconf-set-selections
 
@@ -20,10 +18,9 @@ RUN apt-get -y update && apt-get -y install --install-recommends firefox=44.0* p
 # Update Pipelight plugins
 #RUN pipelight-plugin --update
 
-# Add non-superuser
-RUN groupadd -g 1000 storage && useradd -u 1000 -g storage storage && usermod -aG video storage
 
-USER storage
+VOLUME /home
+ENV HOME /home
 
 ENTRYPOINT ["/usr/bin/firefox"]
 CMD ["-new-instance"]
