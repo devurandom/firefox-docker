@@ -1,23 +1,24 @@
 #!/bin/bash
 
+set -x
+set -e
+
 container_exists() {
 	local container_name="$1"
 	docker ps -a | awk '$NF=="'"${container_name}"'"{found=1} END{if(!found){exit 1}}'
 }
 
-set -e
-
-xhost +local:
-
-#if ! container_exists storage ; then
-#	docker run --name storage devurandom/storage
-#fi
-
-declare -a dri_devices
-for d in `find /dev/dri -type c` ; do
-	dri_devices+=(--device "${d}")
-done
+#declare -a dri_devices
+#for d in `find /dev/dri -type c` ; do
+#	dri_devices+=(--device "${d}")
+#done
 
 docker_address="$(ip address show dev docker0 | egrep '\<inet\>' | awk '{print$2}' | cut -d/ -f1)"
 
-exec docker run --rm --user "$(id -u)" --volume "${HOME}"/firefox-storage:/home:rw --env HOME=/home --env CUPS_SERVER="${docker_address}" --env SOCKS_SERVER="${docker_address}:5080" --env SOCKS_VERSION=5 --env DISPLAY="${DISPLAY}" --volume /tmp/.X11-unix:/tmp/.X11-unix --env PULSE_SERVER="unix:/tmp/pulse-unix" --volume /run/user/"${UID}"/pulse/native:/tmp/pulse-unix "${dri_devices[@]}" --volume /etc/localtime:/etc/localtime:ro --volume /etc/timezone:/etc/timezone:ro devurandom/firefox "$@"
+docker run --detach --publish 30000:14500 --user "$(id -u):1000" --volume "${HOME}"/firefox-storage:/home/user:rw --env XPRA_EXTRA_ARGS="--tcp-auth= --tcp-encryption=" --env HOME=/home --env CUPS_SERVER="${docker_address}" --env SOCKS_SERVER="${docker_address}:5080" --env SOCKS_VERSION=5 "${dri_devices[@]}" --volume /etc/localtime:/etc/localtimeXX:ro --volume /etc/timezone:/etc/timezoneXX:ro devurandom/firefox "$@"
+
+while ! nc -z localhost 30000 ; do
+	sleep 1
+done
+
+exec xpra attach tcp:localhost:30000
