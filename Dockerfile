@@ -1,4 +1,4 @@
-FROM quay.io/urzds/xpra:v2.0-alpine-1
+FROM quay.io/urzds/xpra:v2.0.2-alpine-1
 MAINTAINER Dennis Schridde <devurandom@gmx.net>
 
 RUN apk add --no-cache \
