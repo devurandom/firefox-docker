@@ -17,7 +17,7 @@ docker_address="$(ip address show dev docker0 | egrep '\<inet\>' | awk '{print$2
 
 docker run --detach --publish 30000:14500 --user "$(id -u):1000" --volume "${HOME}"/firefox-storage:/home/user:rw --env XPRA_EXTRA_ARGS="--tcp-auth= --tcp-encryption=" --env HOME=/home --env CUPS_SERVER="${docker_address}" --env SOCKS_SERVER="${docker_address}:5080" --env SOCKS_VERSION=5 "${dri_devices[@]}" --volume /etc/localtime:/etc/localtimeXX:ro --volume /etc/timezone:/etc/timezoneXX:ro devurandom/firefox "$@"
 
-while ! nc -z localhost 30000 ; do
+while ! curl --silent http://localhost:30000/Status | grep --quiet 'disconnect: invalid packet header' ; do
 	sleep 1
 done
 
