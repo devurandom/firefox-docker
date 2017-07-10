@@ -21,4 +21,4 @@ while ! nc -z localhost 30000 ; do
 	sleep 1
 done
 
-exec xpra attach tcp:localhost:30000
+exec xpra attach tcp/localhost:30000
