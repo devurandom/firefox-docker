@@ -3,6 +3,9 @@
 set -x
 set -e
 
+CONTAINER_IMAGE=quay.io/devurandom/firefox
+FIREFOX_STORAGE="${HOME}"/firefox-storage
+
 container_exists() {
 	local container_name="$1"
 	docker ps -a | awk '$NF=="'"${container_name}"'"{found=1} END{if(!found){exit 1}}'
@@ -15,7 +18,7 @@ container_exists() {
 
 docker_address="$(ip address show dev docker0 | egrep '\<inet\>' | awk '{print$2}' | cut -d/ -f1)"
 
-docker run --detach --publish 30000:14500 --user "$(id -u):$(id -g)" --volume "${HOME}"/firefox-storage:/home/user:rw --env XPRA_EXTRA_ARGS="--tcp-auth= --tcp-encryption=" --env HOME=/home --env CUPS_SERVER="${docker_address}" --env SOCKS_SERVER="${docker_address}:5080" --env SOCKS_VERSION=5 "${dri_devices[@]}" --volume /etc/localtime:/etc/localtimeXX:ro --volume /etc/timezone:/etc/timezoneXX:ro devurandom/firefox "$@"
+docker run --detach --publish 30000:14500 --user "$(id -u):$(id -g)" --volume "${FIREFOX_STORAGE}":/home:rw --volume /var/run/nscd/socket:/var/run/nscd/socket:rw --volume /etc/localtime:/etc/localtime:ro --volume /etc/timezone:/etc/timezone:ro --env XPRA_EXTRA_ARGS="--tcp-auth= --tcp-encryption=" --env CUPS_SERVER="${docker_address}" --env SOCKS_SERVER="${docker_address}:5080" --env SOCKS_VERSION=5 "${dri_devices[@]}" "${CONTAINER_IMAGE}" "$@"
 
 while ! curl --silent http://localhost:30000/Status | grep --quiet 'disconnect: invalid packet header' ; do
 	sleep 1
