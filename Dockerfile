@@ -8,7 +8,5 @@ RUN apk add --no-cache \
 	ttf-liberation
 
 VOLUME /home
-ENV HOME=/home
-
-#CMD ["/usr/bin/vglrun", "-d :100", "/usr/bin/firefox", "--no-remote"]
-CMD ["/usr/bin/firefox", "--no-remote"]
+ENV HOME=/home \
+	XPRA_CHILD="/usr/bin/firefox --no-remote"
